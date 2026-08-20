@@ -46,11 +46,47 @@ impl State {
     fn process(&mut self, message: Message) {
         // TODO: Create a match expression to process the different message
         // variants using the methods defined above.
+        match message {
+            Message::Resize { width, height } => self.resize(width, height),
+            Message::Move(point) => self.move_position(point),
+            Message::Echo(s) => self.echo(s),
+            Message::ChangeColor(r, g, b) => self.change_color(r, g, b),
+            Message::Quit => self.quit(),
+        }
     }
 }
 
 fn main() {
-    // You can optionally experiment here.
+    let mut state = State {
+        width: 0,
+        height: 0,
+        position: Point { x: 0, y: 0 },
+        message: String::from("(none)"),
+        color: (0, 0, 0),
+        quit: false,
+    };
+
+    let message = Message::Resize {
+        width: 1920,
+        height: 1080,
+    };
+
+    // `match` is an expression, not just a statement: every arm yields a value
+    // of the same type, and the whole `match` evaluates to it. Matching on
+    // `&message` binds the payloads by reference, so `message` itself is only
+    // borrowed here -- that's what lets us hand it to `process` afterwards.
+    let label = match &message {
+        Message::Resize { width, height } => format!("resize to {width}x{height}"),
+        Message::Move(point) => format!("move to ({}, {})", point.x, point.y),
+        Message::Echo(text) => format!("echo {text:?}"),
+        Message::ChangeColor(r, g, b) => format!("recolor to ({r}, {g}, {b})"),
+        Message::Quit => String::from("quit"),
+    };
+
+    println!("before:     {}x{}", state.width, state.height);
+    println!("processing: {label}");
+    state.process(message);
+    println!("after:      {}x{}", state.width, state.height);
 }
 
 #[cfg(test)]

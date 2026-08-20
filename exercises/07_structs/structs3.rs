@@ -24,19 +24,29 @@ impl Package {
     }
 
     // TODO: Add the correct return type to the function signature.
-    fn is_international(&self) {
+    fn is_international(&self) -> bool {
         // TODO: Read the tests that use this method to find out when a package
         // is considered international.
+        self.sender_country != self.recipient_country
     }
 
     // TODO: Add the correct return type to the function signature.
-    fn get_fees(&self, cents_per_gram: u32) {
+    fn get_fees(&self, cents_per_gram: u32) -> u32 {
         // TODO: Calculate the package's fees.
+        self.weight_in_grams * cents_per_gram
     }
 }
 
 fn main() {
-    // You can optionally experiment here.
+    // `new` is an associated function: no `self`, so it's called on the type
+    // itself with `::`. It takes ownership of the two Strings.
+    let package = Package::new(String::from("India"), String::from("Japan"), 800);
+
+    // `is_international` and `get_fees` are methods: they take `&self`, so they
+    // only borrow. That's why we can call both and still use `package` after.
+    println!("international? {}", package.is_international());
+    println!("fees at 3c/g:  {} cents", package.get_fees(3));
+    println!("{package:?}");
 }
 
 #[cfg(test)]

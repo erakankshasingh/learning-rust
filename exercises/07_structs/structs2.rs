@@ -22,7 +22,21 @@ fn create_order_template() -> Order {
 }
 
 fn main() {
-    // You can optionally experiment here.
+    let template = create_order_template();
+
+    // Struct update syntax: set only what changes, take the rest from `template`.
+    let my_order = Order {
+        name: String::from("Akanksha"),
+        count: 3,
+        ..template
+    };
+
+    println!("{my_order:?}");
+
+    // `template` is still usable here: the one non-Copy field (`name`, a String)
+    // was overridden, so `..` only had Copy fields left to take. Drop the `name`
+    // line above and this print stops compiling -- the String would have moved.
+    println!("template survived: {}", template.name);
 }
 
 #[cfg(test)]
@@ -34,7 +48,15 @@ mod tests {
         let order_template = create_order_template();
 
         // TODO: Create your own order using the update syntax and template above!
-        // let your_order =
+        let your_order = Order {
+            name: String::from("Hacker in Rust"),
+            year: order_template.year,
+            made_by_phone: order_template.made_by_phone,
+            made_by_mobile: order_template.made_by_mobile,
+            made_by_email: order_template.made_by_email,
+            item_number: order_template.item_number,
+            count: 1,
+        };
 
         assert_eq!(your_order.name, "Hacker in Rust");
         assert_eq!(your_order.year, order_template.year);
